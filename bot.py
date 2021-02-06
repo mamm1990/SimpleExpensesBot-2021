@@ -180,6 +180,24 @@ def on_remove_record(message):
         bot.reply_to(message, f"No se pudo remover el registro: {index}")
 
 #########################################################
+@bot.message_handler(regexp=r"^(listar cuentas|lc)$")
+def on_list_accounts(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    text = ""
+
+    if logic.check_admin(message.from_user.id):
+        accounts = logic.list_accounts()
+        text = "``` Listado de cuentas:\n\n"
+        for account in accounts:
+            text += f"| {account.id} | ${account.balance} |\n"
+        text += "```"
+    else:
+        text = f"\U0000274C Esta funcionalidad sólo está disponible para administradores"
+    
+    bot.reply_to(message, text, parse_mode="Markdown")
+
+
+#########################################################
 @bot.message_handler(func=lambda message: True)
 def on_fallback(message):
     bot.send_chat_action(message.chat.id, 'typing')
